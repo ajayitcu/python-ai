@@ -1,58 +1,45 @@
 import asyncio
 import os
-import httpx
+
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 
 load_dotenv()
 
 class ChatService:
-    def __init__(self,prompt:str):
-        api_key=os.getenv("OPENROUTER_API_KEY")
-        if not api_key:
-            raise ValueError("OPENROUTER_API_KEY not found in environment variables")
-        self.api_key=api_key
-        self.base_url="https://openrouter.ai/api/v1"
-        self.prompt=prompt
-        self.client=AsyncOpenAI(
-                api_key=os.getenv("OPENROUTER_API_KEY"),
-                base_url="https://openrouter.ai/api/v1"
-            )
-        self.prompt=prompt
 
-    async def chatbot(self,model:str="nvidia/nemotron-3-ultra-550b-a55b:free"):
-        response=await self.client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role":"system","content":"Chat Assistant"},
-                {"role":"user","content":self.prompt}
-            ]
+    def __init__(self):
+        api_key = os.environ["OPENROUTER_API_KEY"]
 
-
-
+        self.client = AsyncOpenAI(
+            api_key=api_key,
+            base_url="https://openrouter.ai/api/v1"
         )
+
+    async def ask(self, question: str) -> str:
+        response = await self.client.chat.completions.create(
+            model="deepseek/deepseek-v4.1-flash",
+            messages=[
+                {
+                    "role": "user",
+                    "content": question
+                }
+            ]
+        )
+
+        if not response.choices:
+            raise ValueError(f"Empty choices in response. Full response: {response}")
 
         return response.choices[0].message.content
 
 
 async def main():
-    prompt=input("Please ask your Query")
-    service=ChatService(prompt)
-    reply=await service.chatbot()
-    print(reply)
+    chat_service = ChatService()
+
+    query = input("Query:")
+    answer = await chat_service.ask(query)
+    print(answer)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     asyncio.run(main())
-
-    
-
-        
-
-
-
-    
-
-    
-
-   
