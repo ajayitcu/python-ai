@@ -1,0 +1,22 @@
+[project]
+name = "class-2-1"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Ajay Kumar", email = "rajaykumar500@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "dotenv>=0.9.9",
+    "httpx>=0.28.1",
+    "openai>=3.24.0",
+    "python-dotenv>=1.2.4",
+]
+
+[project.scripts]
+class-2-1 = "class_2_1:main"
+
+[build-system]
+requires = ["uv_build>=0.12.19,<0.13.0"]
+build-backend = "uv_build"
